@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from utils import get_labels_dataset
 
 def base_to_vertex(base):
     mapping = {
@@ -36,8 +35,8 @@ def generate_fcgr(sequence, k, resolution):
             fcgr[x,y] += 1
     return fcgr
 
-def create_amr_fasta_fcgr_dataset():
-    df = get_labels_dataset()
+def create_fcgr_dataset(output_dir, labels_dataset):
+    df = labels_dataset
     new_rows = []
     for i in range(len(df)):
         sequence = df['sequence'][i]
@@ -46,6 +45,6 @@ def create_amr_fasta_fcgr_dataset():
         row_data['fcgr'] = fcgr.flatten().tolist()
         new_rows.append(row_data)
     result_df = pd.DataFrame(new_rows)
-    result_df.to_csv("../../data/processed/fcgr_dataset.csv", index=False)
+    result_df.to_csv(output_dir, index=False)
 
-create_amr_fasta_fcgr_dataset()
+

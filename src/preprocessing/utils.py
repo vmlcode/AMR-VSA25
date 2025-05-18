@@ -1,4 +1,4 @@
 import pandas as pd
 
-def get_labels_dataset():
-    return pd.read_csv("./../../data/labels.csv")
+def get_dataset(path):
+    return pd.read_csv(path)

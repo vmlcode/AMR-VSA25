@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "amr_vsa_25"
+version = "0.1.0"
+description = "AMR (Antimicrobial Resistance) Analysis Pipeline for VSA-25 project"
+readme = "README.md"
+requires-python = ">=3.8"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["pipeline", "preprocessing"]

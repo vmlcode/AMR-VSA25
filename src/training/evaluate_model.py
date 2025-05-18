@@ -7,4 +7,5 @@ def evaulate_model(model, x_test, y_test):
         x_test: Test data.
         y_test: Test labels.
     """
-    return model.evaluate(x_test, y_test)
+    return model.evaluate(x_test, y_test) # returns accuaracy and f1 score
+

@@ -13,7 +13,7 @@ def extract_sequences_from_directory(directory):
                 sequences.append([seq, record.id])
     return sequences
 
-def populate_amr_fasta_dataset(dir_path):
+def populate_amr_fasta_dataset(dir_path, output_path):
     df = pd.DataFrame(columns=['sample_id', 'sequence', 'label (not resistant[0]/resistant[1] to Trimethoprim)'])
     for directory in os.listdir(dir_path):
         if directory == '0':
@@ -22,8 +22,7 @@ def populate_amr_fasta_dataset(dir_path):
         if directory == '1':
             for seq in extract_sequences_from_directory(os.path.join(dir_path, directory)):
                 df.loc[len(df)] = [seq[1], seq[0], 1]
-    df.to_csv('../../data/labels.csv', index=False)    
+    df.to_csv(output_path, index=False)    
 
 
-populate_amr_fasta_dataset("../../Examples/")
 

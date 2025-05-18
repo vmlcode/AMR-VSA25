@@ -1,4 +1,4 @@
-from utils import get_labels_dataset
+
 from itertools import product
 from Bio.SeqUtils import gc_fraction, molecular_weight
 import pandas as pd
@@ -42,8 +42,8 @@ def get_at_ratio(sequence):
 def get_molecular_weight(sequence):
   return molecular_weight(sequence, seq_type='DNA', monoisotopic=True)
 
-def create_kmer_dataset():
-    df = get_labels_dataset()
+def create_kmer_dataset(output_dir ,labels_dataset):
+    df = labels_dataset
     new_rows = []
 
     for i in range(len(df)):
@@ -64,6 +64,6 @@ def create_kmer_dataset():
         new_rows.append(row_data)
 
     result_df = pd.DataFrame(new_rows)
-    result_df.to_csv("../../data/processed/kmer_frecuency_dataset.csv", index=False)
+    result_df.to_csv(output_dir, index=False)
 
-create_kmer_dataset()
+
