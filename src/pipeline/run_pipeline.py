@@ -46,9 +46,16 @@ def run_ml_pipeline():
     # train_set_fcgr = fcgr_dataset.sample(frac=0.8, random_state=42)
     # test_set_fcgr = fcgr_dataset.drop(train_set_fcgr.index)
 
+    
+
     # create the models
     with open(os.path.join(project_root, 'model_config.json'), 'r') as f:
-        models = json.load(f)
+        model_builder = json.load(f)
+
+    for i in range(len(model_builder["models"])):
+        print(model_builder["models"][i])
+
+    
 
 
 
