@@ -1,11 +1,11 @@
 import tensorflow as tf
 
-def build_cnn_model(name, params, optimizer="adam", loss="binary_crossentropy", metrics=["accuracy", tf.keras.metrics.F1Score()], regularization=None):
+def build_cnn_model(name, hidden_layers, optimizer="adam", loss="binary_crossentropy", metrics=["accuracy", tf.keras.metrics.F1Score()], regularization=None):
     """
     Builds a sequential Keras model.
     Args:
         name: Name of the model.
-        params: List of dicts with 'filters' and 'kernel_size' for each Conv2D layer.
+        hidden_layers: List of dicts with 'filters' and 'kernel_size' for each Conv2D layer.
         optimizer: Optimizer name.
         loss: Loss function.
         metrics: List of metrics.
@@ -20,34 +20,34 @@ def build_cnn_model(name, params, optimizer="adam", loss="binary_crossentropy", 
     else:
         regularizer = None
     
-    for i in range(len(params)):
-        if params[i]["layerType"] == "Conv2D":
+    for i in range(len(hidden_layers)):
+        if hidden_layers[i]["layerType"] == "Conv2D":
             model.add(tf.keras.layers.Conv2D(
-                filters=params[i]["filters"],
-                kernel_size=params[i]["kernel_size"],
+                filters=hidden_layers[i]["filters"],
+                kernel_size=hidden_layers[i]["kernel_size"],
                 activation="relu",
                 kernel_regularizer=regularizer,
-                name=f"CONV2D_{i+1}_{params[i]['filters']}_Relu",
-                input_shape=params[i]["input_shape"],
+                name=f"CONV2D_{i+1}_{hidden_layers[i]['filters']}_Relu",
+                input_shape=hidden_layers[i]["input_shape"],
             ))
-        elif params[i]["layerType"] == "MaxPooling2D":
+        elif hidden_layers[i]["layerType"] == "MaxPooling2D":
             model.add(tf.keras.layers.MaxPooling2D(
-                pool_size=params[i]["pool_size"],
-                name=f"MAXPOOLING2D_{i+1}_{params[i]['pool_size'][0]}x{params[i]['pool_size'][1]}",
+                pool_size=hidden_layers[i]["pool_size"],
+                name=f"MAXPOOLING2D_{i+1}_{hidden_layers[i]['pool_size'][0]}x{hidden_layers[i]['pool_size'][1]}",
             ))
-        elif params[i]["layerType"] == "Flatten":
+        elif hidden_layers[i]["layerType"] == "Flatten":
             model.add(tf.keras.layers.Flatten(
                 name=f"FLATTEN_{i+1}",
             ))
-        elif params[i]["layerType"] == "Dense":
+        elif hidden_layers[i]["layerType"] == "Dense":
             model.add(tf.keras.layers.Dense(
-                units=params[i]["units"],
+                units=hidden_layers[i]["units"],
                 activation="relu",
                 kernel_regularizer=regularizer,
-                name=f"DENSE_{i+1}_{params[i]['units']}_Relu"
+                name=f"DENSE_{i+1}_{hidden_layers[i]['units']}_Relu"
             ))
 
-    model.add(tf.keras.layers.Dense(1, activation="sigmoid", name=f"DENSE_{len(params)+1}_1_Sigmoid"))
+    model.add(tf.keras.layers.Dense(1, activation="sigmoid", name=f"DENSE_{len(hidden_layers)+1}_1_Sigmoid"))
     model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
     return model
 

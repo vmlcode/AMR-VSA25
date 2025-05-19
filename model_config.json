@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "type": "CNN",
+      "optimizer": "adam",
+      "loss": "binary_crossentropy",
+      "metrics": ["accuracy", "f1_score"],
+      "regularization": "L2",
+      "metadata": "Normalized",
+      "hidden_layers": [
+        {
+          "layerType": "Conv2D",
+          "filters": 32,
+          "kernel_size": [3, 3],
+          "input_shape": [64, 64, 1]
+        },
+        {
+          "layerType": "MaxPooling2D",
+          "pool_size": [2, 2]
+        },
+        {
+          "layerType": "Flatten"
+        },
+        {
+          "layerType": "Dense",
+          "units": 128
+        }
+      ]
+    },
+    {
+      "type": "DNN",
+      "optimizer": "adam",
+      "loss": "binary_crossentropy",
+      "metrics": ["accuracy", "f1_score"],
+      "regularization": "L2",
+      "metadata": "Normalized",
+      "hidden_layers": [{ "units": 6 }, { "units": 5 }, { "units": 4 }]
+    }
+  ]
+}

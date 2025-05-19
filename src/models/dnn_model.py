@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-def build_dnn_model(name, params, optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"], regularization=None):
+def build_dnn_model(name, hidden_layers, optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"], regularization=None):
     """
     Builds a sequential Keras model.
     Args:
@@ -20,15 +20,15 @@ def build_dnn_model(name, params, optimizer="adam", loss="binary_crossentropy", 
     else:
         regularizer = None
 
-    for i in range(len(params)):
+    for i in range(len(hidden_layers)):
         model.add(tf.keras.layers.Dense(
-            units=params[i]["units"],
+            units=hidden_layers[i]["units"],
             activation="relu",
             kernel_regularizer=regularizer,
-            name=f"DENSE_{i+1}_{params[i]['units']}_Relu"
+            name=f"DENSE_{i+1}_{hidden_layers[i]['units']}_Relu"
         ))
     
-    model.add(tf.keras.layers.Dense(1, activation="sigmoid", name=f"DENSE_{len(params)+1}_1_Sigmoid"))
+    model.add(tf.keras.layers.Dense(1, activation="sigmoid", name=f"DENSE_{len(hidden_layers)+1}_1_Sigmoid"))
     model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
     
     return model

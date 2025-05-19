@@ -5,6 +5,7 @@ from preprocessing.kmer_and_features_dataset import create_kmer_dataset
 # from preprocessing.fcgr_dataset import create_fcgr_dataset
 
 import os
+import json
 
 def run_ml_pipeline():
     """
@@ -38,7 +39,20 @@ def run_ml_pipeline():
     # fcgr_dataset = get_dataset(fcgr_dataset_dir)
     # print(fcgr_dataset.head())  
 
-    
+    # divide the datasets into train and test sets
+    train_set_kmer = kmer_features_dataset.sample(frac=0.8, random_state=42)
+    test_set_kmer = kmer_features_dataset.drop(train_set_kmer.index)
+
+    # train_set_fcgr = fcgr_dataset.sample(frac=0.8, random_state=42)
+    # test_set_fcgr = fcgr_dataset.drop(train_set_fcgr.index)
+
+    # create the models
+    with open(os.path.join(project_root, 'model_config.json'), 'r') as f:
+        models = json.load(f)
+
+
+
+
 
 
 
