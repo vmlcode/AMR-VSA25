@@ -1,6 +1,6 @@
 {
   "test_settings": {
-    "epochs": [100, 400, 250, 70]
+    "epochs": [150, 300, 200, 400]
   },
   "models": [
     {
@@ -13,8 +13,8 @@
       "hidden_layers": [
         {
           "layerType": "Conv2D",
-          "filters": 32,
-          "kernel_size": [3, 3],
+          "filters": 64,
+          "kernel_size": [5, 5],
           "input_shape": [64, 64, 1]
         },
         {
@@ -22,7 +22,21 @@
           "pool_size": [2, 2]
         },
         {
+          "layerType": "Conv2D",
+          "filters": 128,
+          "kernel_size": [3, 3],
+          "activation": "relu"
+        },
+        {
+          "layerType": "MaxPooling2D",
+          "pool_size": [2, 2]
+        },
+        {
           "layerType": "Flatten"
+        },
+        {
+          "layerType": "Dense",
+          "units": 256
         },
         {
           "layerType": "Dense",
@@ -40,7 +54,7 @@
       "hidden_layers": [
         {
           "layerType": "Conv2D",
-          "filters": 32,
+          "filters": 64,
           "kernel_size": [3, 3],
           "input_shape": [64, 64, 1]
         },
@@ -50,7 +64,7 @@
         },
                 {
           "layerType": "Conv2D",
-          "filters": 64,
+          "filters": 32,
           "kernel_size": [3, 3],
           "input_shape": [64, 64, 1]
         },
@@ -60,26 +74,88 @@
         },
         {
           "layerType": "Flatten"
+        },
+        {
+          "layerType": "Dense",
+          "units": 128
+        },
+        {
+          "layerType": "Dense",
+          "units": 64
+        },
+        {
+          "layerType": "Dense",
+          "units": 32
+        },
+        {
+          "layerType": "Dense",
+          "units": 16
         }
       ]
     },
-    {
+            {
+      "type": "CNN",
+      "optimizer": "adam",
+      "loss": "binary_crossentropy",
+      "metrics": ["accuracy", "f1_score"],
+      "regularization": "L2",
+      "metadata": "Normalized",
+      "hidden_layers": [
+        {
+          "layerType": "Conv2D",
+          "filters": 64,
+          "kernel_size": [3, 3],
+          "input_shape": [64, 64, 1]
+        },
+        {
+          "layerType": "MaxPooling2D",
+          "pool_size": [2, 2]
+        },
+        {
+          "layerType": "Flatten"
+        },
+        {
+          "layerType": "Dense",
+          "units": 128
+        },
+        {
+          "layerType": "Dense",
+          "units": 64
+        },
+        {
+          "layerType": "Dense",
+          "units": 32
+        }
+      ]
+    },
+      {
       "type": "DNN",
+      "representation": "kmer_frequency",
       "optimizer": "adam",
       "loss": "binary_crossentropy",
       "metrics": ["accuracy", "f1_score"],
       "regularization": "L1",
       "metadata": "Normalized",
-      "hidden_layers": [{ "units": 30 }, { "units": 15 }, { "units": 5 }]
+      "hidden_layers": [
+        { "units": 128, "activation": "relu" },
+        { "units": 64, "activation": "relu" },
+        { "units": 1, "activation": "sigmoid" }
+      ]
     },
         {
       "type": "DNN",
+      "representation": "FCGR",
       "optimizer": "adam",
       "loss": "binary_crossentropy",
       "metrics": ["accuracy", "f1_score"],
-      "regularization": "L1",
+      "regularization": "L2",
       "metadata": "Normalized",
-      "hidden_layers": [{ "units": 60 }, { "units": 30 }, { "units": 15 }, { "units": 5 }]
+      "hidden_layers": [
+        { "units": 256, "activation": "relu" },
+        { "units": 128, "activation": "relu" },
+        { "units": 64, "activation": "relu" },
+        { "units": 1, "activation": "sigmoid" }
+      ]
     }
   ]
 }
