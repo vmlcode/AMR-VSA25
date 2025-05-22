@@ -48,7 +48,5 @@ def build_cnn_model(name, hidden_layers, optimizer="adam", loss="binary_crossent
             ))
 
     model.add(tf.keras.layers.Dense(1, activation="sigmoid", name=f"DENSE_{len(hidden_layers)+1}_1_Sigmoid"))
-    model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01), loss=tf.keras.losses.BinaryCrossentropy(), metrics=metrics)
     return model
-
-print(build_cnn_model("cnn_3456_45", [{"layerType": "Conv2D", "filters": 32, "kernel_size": (3, 3), "input_shape": (64, 64, 1)}, {"layerType": "MaxPooling2D", "pool_size": (2, 2)}, {"layerType": "Flatten"}, {"layerType": "Dense", "units": 128}]).summary())

@@ -29,10 +29,6 @@ def build_dnn_model(name, hidden_layers, optimizer="adam", loss="binary_crossent
         ))
     
     model.add(tf.keras.layers.Dense(1, activation="sigmoid", name=f"DENSE_{len(hidden_layers)+1}_1_Sigmoid"))
-    model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.01), loss=tf.keras.losses.BinaryCrossentropy(), metrics=metrics)
     
     return model
-
-
-test_params = [{"units": 6}, {"units": 5}, {"units": 4}]
-print(build_dnn_model("dnn_3456_45", test_params).summary())
