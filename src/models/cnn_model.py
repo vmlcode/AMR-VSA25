@@ -28,7 +28,7 @@ def build_cnn_model(name, hidden_layers, optimizer="adam", loss="binary_crossent
                 activation="relu",
                 kernel_regularizer=regularizer,
                 name=f"CONV2D_{i+1}_{hidden_layers[i]['filters']}_Relu",
-                input_shape=hidden_layers[i]["input_shape"],
+                input_shape=hidden_layers[i]["input_shape"] if i == 0 else None,
             ))
         elif hidden_layers[i]["layerType"] == "MaxPooling2D":
             model.add(tf.keras.layers.MaxPooling2D(
