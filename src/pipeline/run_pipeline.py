@@ -8,7 +8,7 @@ from models.cnn_model import build_cnn_model
 
 from pipeline.utils import generate_model_name
 
-from visualization.plots import plot_training_history, plot_model_comparison, plot_training_all_history, plot_training_history_one_image
+from visualization.plots import plot_training_history, plot_model_comparison
 
 from tensorflow.keras.callbacks import EarlyStopping # type: ignore
 
@@ -28,14 +28,13 @@ def run_ml_pipeline():
 
     project_name = "VSA-25"
     run_id = str(time())
-
     analitics_df = pd.DataFrame(columns=["project_name", "run_id", "model_type", "encoding", "model_unique_id", "epochs", "tag", "accuracy", "loss_training", "loss_test", "f1_score", "history"])
 
     # Get the project root directory
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
     
     # Define paths relative to project root
-    data_dir = os.path.join(project_root, 'data', 'raw')
+    data_dir = os.path.join(project_root, 'Examples')
     labels_dir = os.path.join(project_root, 'data', 'labels.csv')
     kmer_features_dir = os.path.join(project_root, 'data', 'processed' ,'kmer_features.csv')
     fcgr_dataset_dir = os.path.join(project_root, 'data', 'processed', 'fcgr_dataset.csv')
@@ -48,13 +47,9 @@ def run_ml_pipeline():
     print(labels_df.head())  # Display the first few rows of the labels dataset
 
     # Create the kmer and features dataset
-    if os.path.exists(kmer_features_dir):
-        print("Kmer features dataset already exists. Loading from file.")
-        kmer_features_dataset = get_dataset(kmer_features_dir)
-    else:
-        create_kmer_dataset(kmer_features_dir, labels_df)
-        kmer_features_dataset = get_dataset(kmer_features_dir)
-        print(kmer_features_dataset.head())  # Display the first few rows of the kmer features dataset
+    create_kmer_dataset(kmer_features_dir, labels_df)
+    kmer_features_dataset = get_dataset(kmer_features_dir)
+    print(kmer_features_dataset.head())  # Display the first few rows of the kmer features dataset
 
     #check if fcgr dataset already exists
     if os.path.exists(fcgr_dataset_dir):
@@ -72,7 +67,7 @@ def run_ml_pipeline():
     
 
     # divide the datasets into train and test sets
-    train_set_kmer = kmer_features_dataset.sample(frac=0.6, random_state=46)
+    train_set_kmer = kmer_features_dataset.sample(frac=0.8, random_state=42)
     test_set_kmer = kmer_features_dataset.drop(train_set_kmer.index)
 
     x_train_kmer = train_set_kmer.drop(columns=['sample_id', 'label (not resistant[0]/resistant[1] to Trimethoprim)'])
@@ -85,7 +80,7 @@ def run_ml_pipeline():
     print("Test set kmer labels shape:", y_test_kmer.shape)
     
     
-    train_set_fcgr = fcgr_dataset.sample(frac=0.6, random_state=46)
+    train_set_fcgr = fcgr_dataset.sample(frac=0.8, random_state=42)
     test_set_fcgr = fcgr_dataset.drop(train_set_fcgr.index)
 
     # Stack fcgr arrays and add channel dimension
@@ -114,7 +109,7 @@ def run_ml_pipeline():
         print(model_builder["models"][i])
         if model_builder["models"][i]["type"] == "DNN":
             model = build_dnn_model(
-                name=f"{model_builder['models'][i]['id']}_{random.randint(1000, 9999)}",
+                name=str(random.randint(1000, 9999)),
                 hidden_layers=model_builder["models"][i]["hidden_layers"],
                 optimizer=model_builder["models"][i]["optimizer"],
                 loss=model_builder["models"][i]["loss"],
@@ -125,7 +120,7 @@ def run_ml_pipeline():
             dnn_models.append(model)
         if model_builder["models"][i]["type"] == "CNN":
             model = build_cnn_model(
-                name=f"{model_builder['models'][i]['id']}_{random.randint(1000, 9999)}",
+                name=str(random.randint(1000, 9999)),
                 hidden_layers=model_builder["models"][i]["hidden_layers"],
                 optimizer=model_builder["models"][i]["optimizer"],
                 loss=model_builder["models"][i]["loss"],
@@ -169,7 +164,7 @@ def run_ml_pipeline():
                 "run_id": run_id,
                 "model_type": "DNN",
                 "encoding": "KMER",
-                "model_unique_id": f"{cnn_models[i].name}_{epochs}",
+                "model_unique_id": dnn_models[i].name,
                 "epochs": epochs,
                 "tag": "RESEARCH",
                 "accuracy": model.history['accuracy'][-1],
@@ -183,7 +178,7 @@ def run_ml_pipeline():
         for epochs in model_builder["test_settings"]["epochs"]:
             model_name = generate_model_name(project=project_name, model_type="CNN", encoding="FCGR", model_unique_id=cnn_models[i].name, epochs=epochs, tag="RESEARCH", run_id=run_id)
             print(f"Training {cnn_models[i].name} for {epochs} epochs")
-            trained_model = cnn_models[i].fit(
+            model = cnn_models[i].fit(
                 x_train_fcgr,
                 y_train_fcgr,
                 epochs=epochs,
@@ -192,7 +187,7 @@ def run_ml_pipeline():
             )
             cnn_models[i].save(os.path.join(project_root, "exports", "models", f"{model_name}.keras"))
             # Add model_unique_id to history
-            history = trained_model.history
+            history = model.history
             history['model_unique_id'] = cnn_models[i].name
             cnn_history.append(history)
             analitics_df = pd.concat([analitics_df, pd.DataFrame([{
@@ -200,16 +195,15 @@ def run_ml_pipeline():
                 "run_id": run_id,
                 "model_type": "CNN",
                 "encoding": "FCGR",
-                "model_unique_id": f"{cnn_models[i].name}_{epochs}",
+                "model_unique_id": cnn_models[i].name,
                 "epochs": epochs,
                 "tag": "RESEARCH",
-                "accuracy": trained_model.history['accuracy'][-1],
-                "loss_training": trained_model.history['loss'][-1],
-                "loss_test": trained_model.history['val_loss'][-1],
-                "f1_score": trained_model.history['f1_score'][-1],
-                "history": trained_model.history
+                "accuracy": model.history['accuracy'][-1],
+                "loss_training": model.history['loss'][-1],
+                "loss_test": model.history['val_loss'][-1],
+                "f1_score": model.history['f1_score'][-1],
+                "history": model.history
             }])], ignore_index=True)
-            print(trained_model.history["accuracy"][-1])
         
     # Save the analytics DataFrame to a CSV file
     analitics_df.to_csv(os.path.join(project_root, "exports", "reports", f"analytics_{run_id}.csv"), index=False)
@@ -222,18 +216,10 @@ def run_ml_pipeline():
     # Plot training histories
     plot_training_history(dnn_history, "DNN", "KMER", run_id, plot_output_dir)
     plot_training_history(cnn_history, "CNN", "FCGR", run_id, plot_output_dir)
-    plot_training_all_history(dnn_history, "DNN", "KMER", run_id, plot_output_dir)
-    plot_training_all_history(cnn_history, "CNN", "FCGR", run_id, plot_output_dir)
-    plot_training_all_history(dnn_history + cnn_history, "ALL DNN", "ALL CNN", run_id, plot_output_dir)
-    # Plot training history for one image
-    plot_training_history_one_image(dnn_history, "DNN", "KMER", run_id, plot_output_dir)
-    plot_training_history_one_image(cnn_history, "CNN", "FCGR", run_id, plot_output_dir)
-    
 
     # Plot model comparisons
     plot_model_comparison(analitics_df, plot_output_dir, run_id)
             
-
 
 def main():
     """

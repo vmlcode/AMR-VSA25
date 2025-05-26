@@ -40,22 +40,7 @@ def get_at_ratio(sequence):
 
 
 def get_molecular_weight(sequence):
-    weights = {
-        'A': 313.21,
-        'T': 304.2,
-        'C': 289.18,
-        'G': 329.21
-    }
-
-    total_weight = 0.0
-    sequence = sequence.upper()
-
-    for base in sequence:
-        if base in weights:
-            total_weight += weights[base]
-        if len(sequence) > 1:
-            total_weight -= 61.96 * (len(sequence) - 1)
-    return total_weight
+  return molecular_weight(sequence, seq_type='DNA', monoisotopic=True)
 
 def create_kmer_dataset(output_dir ,labels_dataset):
     df = labels_dataset

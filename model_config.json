@@ -4,7 +4,6 @@
   },
   "models": [
     {
-      "id": "model1",
       "type": "CNN",
       "optimizer": "adam",
       "loss": "binary_crossentropy",
@@ -46,7 +45,6 @@
       ]
     },
         {
-      "id": "model2",
       "type": "CNN",
       "optimizer": "adam",
       "loss": "binary_crossentropy",
@@ -96,7 +94,6 @@
       ]
     },
             {
-      "id": "model3",
       "type": "CNN",
       "optimizer": "adam",
       "loss": "binary_crossentropy",
@@ -132,7 +129,6 @@
       ]
     },
       {
-      "id": "model4",
       "type": "DNN",
       "representation": "kmer_frequency",
       "optimizer": "adam",
@@ -147,7 +143,6 @@
       ]
     },
         {
-      "id": "model5",
       "type": "DNN",
       "representation": "FCGR",
       "optimizer": "adam",
@@ -158,7 +153,8 @@
       "hidden_layers": [
         { "units": 256, "activation": "relu" },
         { "units": 128, "activation": "relu" },
-        { "units": 64, "activation": "relu" }
+        { "units": 64, "activation": "relu" },
+        { "units": 1, "activation": "sigmoid" }
       ]
     }
   ]
